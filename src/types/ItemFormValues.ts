@@ -4,4 +4,5 @@ export type ItemFormValues = {
     condition: "new" | "used";
     price: number;
     negotiable: boolean;
+    image: File | null;
 }
