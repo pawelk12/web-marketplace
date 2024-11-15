@@ -1,8 +1,6 @@
 import {IconBuildingStore, IconCirclePlus} from "@tabler/icons-react";
-import {useState} from "react";
 import {Box, NavLink} from "@mantine/core";
-import {useNavigate} from "react-router-dom";
-
+import {useLocation, useNavigate} from "react-router-dom";
 
 const data = [
     {icon: IconBuildingStore, label: 'Marketplace', link: '/listings'},
@@ -11,17 +9,17 @@ const data = [
 
 
 export const NavbarApp = () => {
-    const [active, setActive] = useState(0);
-    const navigate = useNavigate();
 
-    const items = data.map((item, index) => (
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const items = data.map((item) => (
         <NavLink
             key={item.label}
-            active={index === active}
+            active={location.pathname === item.link}
             label={item.label}
-            leftSection={<item.icon size="1rem" stroke={1.5}/>}
+            leftSection={<item.icon size="1.5rem" stroke={1.5}/>}
             onClick={() => {
-                setActive(index)
                 navigate(item.link);
                 }
             }
