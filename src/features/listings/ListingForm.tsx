@@ -37,7 +37,7 @@ const handleSubmit = form.onSubmit((values) => {
     return (
         <Box style={(theme) => ({
             backgroundColor: theme.colors.dark[6],
-            maxWidth: 20000,
+            // maxWidth: 20000,
             margin: "auto",
             borderRadius: 10,
             padding: "20px",
@@ -74,6 +74,7 @@ const handleSubmit = form.onSubmit((values) => {
 
                 <NumberInput
                     withAsterisk = {false}
+                    hideControls = {true}
                     mb="lg"
                     required
                     label="Price: "
