@@ -2,7 +2,7 @@ import {
   IsBoolean,
   IsIn,
   IsNotEmpty,
-  IsNumberString,
+  IsNumber,
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
@@ -18,10 +18,9 @@ export class CreateListingDto {
   @IsIn(['new', 'used'])
   condition: 'new' | 'used';
 
-  // @Transform(({ value }) => parseFloat(value))
-  // @IsNumber()
-  @IsNumberString()
-  price: string;
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value))
+  price: number;
 
   @Transform(({ value }) => value === 'true')
   @IsBoolean()

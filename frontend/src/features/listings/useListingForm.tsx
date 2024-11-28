@@ -3,7 +3,7 @@ import {ItemFormValues} from "../../types/ItemFormValues.ts";
 
 export const useListingForm = () => {
     return useForm<ItemFormValues>({
-        mode: 'controlled',
+        mode: 'uncontrolled',
         initialValues: {
             name: "",
             description: "",
