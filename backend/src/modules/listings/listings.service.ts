@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateListingDto } from './dto/create-listing-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditListingDto } from './dto/edit-listing-dto';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class ListingsService {
@@ -41,6 +42,21 @@ export class ListingsService {
   }
 
   async deleteById(id: number) {
+    const fileToDelete = await this.prisma.listing.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        filePath: true,
+      },
+    });
+
+    try {
+      await fs.unlink(fileToDelete.filePath);
+    } catch (error) {
+      console.log(error);
+    }
+
     return this.prisma.listing.delete({
       where: {
         id: id,
@@ -48,7 +64,24 @@ export class ListingsService {
     });
   }
 
-  async editListing(id: number, data: EditListingDto, filePath: string) {
+  async editListing(id: number, data: EditListingDto, filePath?: string) {
+    if (filePath) {
+      const oldFile = await this.prisma.listing.findUnique({
+        where: {
+          id: id,
+        },
+        select: {
+          filePath: true,
+        },
+      });
+      console.log(oldFile);
+      try {
+        await fs.unlink(oldFile.filePath);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     return this.prisma.listing.update({
       where: {
         id: id,

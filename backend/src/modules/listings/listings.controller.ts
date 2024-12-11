@@ -107,23 +107,30 @@ export class ListingsController {
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
         }),
     )
-    file: Express.Multer.File,
-    @Body() data: EditListingDto,
+    file?: Express.Multer.File | undefined,
+    @Body() data?: EditListingDto,
   ) {
     const listing = await this.listingsService.getListingById(id);
     if (!listing) {
       throw new ListingNotFoundException();
     }
-    const uniqueFileName = `${uuidv4()}-${file.originalname}`;
 
-    const uploadDir = path.join(__dirname, '..', '..', '..', 'uploads'); // Folder "uploads"
-    const filePath = path.join(uploadDir, uniqueFileName);
+    if (file) {
+      const uniqueFileName = `${uuidv4()}-${file.originalname}`;
 
-    await fs.mkdir(uploadDir, { recursive: true });
+      const uploadDir = path.join(__dirname, '..', '..', '..', 'uploads'); // Folder "uploads"
+      const filePath = path.join(uploadDir, uniqueFileName);
 
-    await fs.writeFile(filePath, file.buffer);
-    return this.listingsService.editListing(id, data, filePath);
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      await fs.writeFile(filePath, file.buffer);
+
+      return this.listingsService.editListing(id, data, filePath);
+    }
+
+    return this.listingsService.editListing(id, data);
   }
 }
