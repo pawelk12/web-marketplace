@@ -88,7 +88,6 @@ export class ListingsController {
     await this.listingsService.deleteById(id);
   }
 
-  //cleaning old image of listing on edit
   @Put(':id')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -121,7 +120,7 @@ export class ListingsController {
     if (file) {
       const uniqueFileName = `${uuidv4()}-${file.originalname}`;
 
-      const uploadDir = path.join(__dirname, '..', '..', '..', 'uploads'); // Folder "uploads"
+      const uploadDir = path.join(__dirname, '..', '..', '..', 'uploads'); // directory "uploads"
       const filePath = path.join(uploadDir, uniqueFileName);
 
       await fs.mkdir(uploadDir, { recursive: true });

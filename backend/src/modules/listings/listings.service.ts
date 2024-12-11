@@ -3,6 +3,8 @@ import { CreateListingDto } from './dto/create-listing-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditListingDto } from './dto/edit-listing-dto';
 import { promises as fs } from 'fs';
+import { ListingNotModifiedException } from '../../exceptions/listing-not-modified-exception';
+import { CheckCommonKeysEqual } from '../../utils/check-common-keys-equal';
 
 @Injectable()
 export class ListingsService {
@@ -65,6 +67,20 @@ export class ListingsService {
   }
 
   async editListing(id: number, data: EditListingDto, filePath?: string) {
+    if (Object.keys(data).length === 0 && !filePath) {
+      throw new ListingNotModifiedException();
+    }
+
+    const oldListing = await this.prisma.listing.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (CheckCommonKeysEqual(oldListing, data) && !filePath) {
+      throw new ListingNotModifiedException();
+    }
+
     if (filePath) {
       const oldFile = await this.prisma.listing.findUnique({
         where: {
@@ -74,7 +90,6 @@ export class ListingsService {
           filePath: true,
         },
       });
-      console.log(oldFile);
       try {
         await fs.unlink(oldFile.filePath);
       } catch (error) {
