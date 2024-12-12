@@ -22,5 +22,6 @@ model Listing {
   price       Float
   negotiable  Boolean
   filePath    String
+  fileName    String
   createdAt   DateTime   @default(now())
 }

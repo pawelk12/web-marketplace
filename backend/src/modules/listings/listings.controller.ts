@@ -75,7 +75,7 @@ export class ListingsController {
     await fs.mkdir(uploadDir, { recursive: true });
 
     await fs.writeFile(filePath, file.buffer);
-    return this.listingsService.addListing(data, filePath);
+    return this.listingsService.addListing(data, filePath, uniqueFileName);
   }
 
   @Delete(':id')
@@ -127,7 +127,12 @@ export class ListingsController {
 
       await fs.writeFile(filePath, file.buffer);
 
-      return this.listingsService.editListing(id, data, filePath);
+      return this.listingsService.editListing(
+        id,
+        data,
+        filePath,
+        uniqueFileName,
+      );
     }
 
     return this.listingsService.editListing(id, data);

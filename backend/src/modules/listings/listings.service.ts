@@ -30,7 +30,7 @@ export class ListingsService {
     });
   }
 
-  async addListing(data: CreateListingDto, filePath: string) {
+  async addListing(data: CreateListingDto, filePath: string, fileName: string) {
     return this.prisma.listing.create({
       data: {
         name: data.name,
@@ -39,6 +39,7 @@ export class ListingsService {
         price: data.price,
         negotiable: data.negotiable,
         filePath: filePath,
+        fileName: fileName,
       },
     });
   }
@@ -66,7 +67,12 @@ export class ListingsService {
     });
   }
 
-  async editListing(id: number, data: EditListingDto, filePath?: string) {
+  async editListing(
+    id: number,
+    data: EditListingDto,
+    filePath?: string,
+    fileName?: string,
+  ) {
     if (Object.keys(data).length === 0 && !filePath) {
       throw new ListingNotModifiedException();
     }
@@ -108,6 +114,7 @@ export class ListingsService {
         price: data.price,
         negotiable: data.negotiable,
         filePath: filePath,
+        fileName: fileName,
       },
     });
   }
