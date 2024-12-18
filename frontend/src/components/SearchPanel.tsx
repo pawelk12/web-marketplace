@@ -2,11 +2,12 @@ import {Button, Collapse, Combobox, Input, InputBase, Paper, SimpleGrid, useComb
 import {useDisclosure} from "@mantine/hooks";
 import {IconSearch} from '@tabler/icons-react';
 import {useState} from "react";
-
+import {QueryParams} from "../types/queryParams.ts";
 
 const sortBy = ["↑ price", "↓ price", "↑ date", "↓ date"];
+type SetParams = (newParams: QueryParams) => void;
 
-export const SearchPanel = () => {
+export const SearchPanel = ({ setParams } : { setParams: SetParams}) => {
     const [opened, {toggle}] = useDisclosure(false);
     const icon = <IconSearch size={14} />;
 
@@ -17,14 +18,34 @@ export const SearchPanel = () => {
 
     const [value, setValue] = useState<string | null>(null);
 
+    const handleApply = ()=>{
+        switch (value){
+            case "↑ price":
+                setParams({sortBy: 'price', sortOrder: 'asc'});
+                break;
+
+            case "↓ price":
+                setParams({sortBy: 'price', sortOrder: 'desc'});
+                break;
+
+            case "↑ date":
+                setParams({sortBy: 'createdAt', sortOrder: 'asc'});
+                break;
+
+            case "↓ date":
+                setParams({sortBy: 'createdAt', sortOrder: 'desc'});
+                break;
+            default:
+                break;
+        }
+    }
+
 
     const options = sortBy.map((item) => (
         <Combobox.Option value={item} key={item}>
             {item}
         </Combobox.Option>
     ));
-
-
 
 
     return (
@@ -59,6 +80,8 @@ export const SearchPanel = () => {
                                 <Combobox.Options>{options}</Combobox.Options>
                             </Combobox.Dropdown>
                         </Combobox>
+                        <Text></Text>
+                        <Button color="teal" radius="lg" onClick={handleApply}>Apply</Button>
                     </SimpleGrid>
                 </Collapse>
             </Paper>
