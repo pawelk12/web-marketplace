@@ -4,6 +4,7 @@ import {IconSearch} from '@tabler/icons-react';
 import {useState} from "react";
 import {QueryParams} from "../types/queryParams.ts";
 
+// To add: updating combobox with sortby options when user inputs queryparams
 const sortBy = ["↑ price", "↓ price", "↑ date", "↓ date"];
 type SetParams = (newParams: QueryParams) => void;
 

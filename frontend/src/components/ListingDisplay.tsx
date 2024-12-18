@@ -13,7 +13,6 @@ export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(queryParams);
                 let queryParamsString: string = "";
                 if(queryParams!=null){
                     const paramsString = new URLSearchParams(queryParams).toString();
