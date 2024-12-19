@@ -2,6 +2,7 @@ import {Card, SimpleGrid, Text} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {ListingForDisplayCard} from "../types/ListingForDisplayCard.ts";
 import {QueryParams} from "../types/queryParams.ts";
+import {Loading} from "./Loading.tsx";
 
 
 export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null}) => {
@@ -38,8 +39,8 @@ export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null
 
     return (
         <>
+            {loading && <Loading/>}
             {error && <div>{error}</div>}
-            {loading && <div>Loading...</div>}
             {listings &&<SimpleGrid cols={1}>
                 {listings.map((listing) => (
                     <Card
