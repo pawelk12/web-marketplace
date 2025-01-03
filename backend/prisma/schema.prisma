@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Listing {
   id          Int      @id @default(autoincrement())
   name        String
@@ -23,5 +22,15 @@ model Listing {
   negotiable  Boolean
   filePath    String
   fileName    String
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime @default(now())
+  user        User @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  listings  Listing[]
 }

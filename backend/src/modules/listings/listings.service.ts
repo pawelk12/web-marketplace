@@ -40,6 +40,8 @@ export class ListingsService {
         negotiable: data.negotiable,
         filePath: filePath,
         fileName: fileName,
+        //temporarily
+        userId: 0,
       },
     });
   }

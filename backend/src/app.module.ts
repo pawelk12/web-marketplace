@@ -5,6 +5,7 @@ import { ListingsModule } from './modules/listings/listings.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { TokenModule } from './modules/token/token.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TokenModule } from './modules/token/token.module';
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TokenModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
