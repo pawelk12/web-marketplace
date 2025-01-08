@@ -30,7 +30,12 @@ export class ListingsService {
     });
   }
 
-  async addListing(data: CreateListingDto, filePath: string, fileName: string) {
+  async addListing(
+    data: CreateListingDto,
+    filePath: string,
+    fileName: string,
+    userId: number,
+  ) {
     return this.prisma.listing.create({
       data: {
         name: data.name,
@@ -40,8 +45,7 @@ export class ListingsService {
         negotiable: data.negotiable,
         filePath: filePath,
         fileName: fileName,
-        //temporarily
-        userId: 0,
+        userId: userId,
       },
     });
   }

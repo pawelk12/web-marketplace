@@ -12,6 +12,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ListingsService } from './listings.service';
@@ -24,12 +25,15 @@ import { promises as fs } from 'fs';
 import { ListingNotFoundException } from '../../exceptions/listing-not-found-exception';
 import { EditListingDto } from './dto/edit-listing-dto';
 import { SortFilterListingDto } from './dto/sort-filter-listing-dto';
+import { TokenGuard } from '../auth/token.guard';
+import { UserID } from '../auth/user.decorator';
 
 @Controller('listings')
 export class ListingsController {
   constructor(private listingsService: ListingsService) {}
 
   @Get()
+  @UseGuards(TokenGuard)
   // this function is async, but nest detects that and waits, so await and async is redundant
   listListings(@Query() sortAndFilter: SortFilterListingDto) {
     return this.listingsService.listListings(sortAndFilter);
@@ -37,6 +41,7 @@ export class ListingsController {
 
   // chce zeby uzytkownik ktory jest autorem jak wejdzie to mial wypelniony formularz i mogl sobie edytowac to ogloszenie
   @Get(':id')
+  @UseGuards(TokenGuard)
   async getListing(@Param('id', ParseIntPipe) id: number) {
     const listing = await this.listingsService.getListingById(id);
     if (!listing) {
@@ -46,6 +51,7 @@ export class ListingsController {
   }
 
   @Post()
+  @UseGuards(TokenGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: multer.memoryStorage(),
@@ -66,6 +72,7 @@ export class ListingsController {
     )
     file: Express.Multer.File,
     @Body() data: CreateListingDto,
+    @UserID() userId: number,
   ) {
     const uniqueFileName = `${uuidv4()}-${file.originalname}`;
 
@@ -75,10 +82,16 @@ export class ListingsController {
     await fs.mkdir(uploadDir, { recursive: true });
 
     await fs.writeFile(filePath, file.buffer);
-    return this.listingsService.addListing(data, filePath, uniqueFileName);
+    return this.listingsService.addListing(
+      data,
+      filePath,
+      uniqueFileName,
+      userId,
+    );
   }
 
   @Delete(':id')
+  @UseGuards(TokenGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteListing(@Param('id', ParseIntPipe) id: number) {
     const listing = await this.listingsService.getListingById(id);
@@ -89,6 +102,7 @@ export class ListingsController {
   }
 
   @Put(':id')
+  @UseGuards(TokenGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: multer.memoryStorage(),

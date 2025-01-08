@@ -7,25 +7,15 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('/api/');
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
   app.use(cookieParser());
-  //
-  ///
-  //
-  //
-  //
-  //Just for developing frontend
   app.enableCors({
     origin: 'http://localhost:5173',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
   });
-  //--------Just for developing frontend
-  //
-  //
-  //
-  //
-  //
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
