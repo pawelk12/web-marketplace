@@ -24,7 +24,7 @@ const handleSubmit = form.onSubmit( async (values) => {
     formData.append("negotiable", values.negotiable.toString());
     formData.append("image", values.image!);
     try {
-        const response = await fetch("http://localhost:8000/listings",
+        const response = await fetch("http://localhost:8000/api/listings",
             {
                 method: "POST",
                 body: formData,

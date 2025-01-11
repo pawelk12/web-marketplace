@@ -19,7 +19,7 @@ export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null
                     const paramsString = new URLSearchParams(queryParams).toString();
                     queryParamsString = paramsString;
                 }
-                const response = await fetch(`http://localhost:8000/listings?${queryParamsString}`);
+                const response = await fetch(`http://localhost:8000/api/listings?${queryParamsString}`);
                 if (!response.ok) {
                     throw new Error(`status: ${response.status}`);
                 }
