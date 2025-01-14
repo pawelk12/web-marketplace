@@ -3,7 +3,7 @@ import { IconX } from '@tabler/icons-react';
 import React from "react";
 
 
-export const LoginFailedNotification = (message: string)=>{
+export const ErrorNotification = (message: string)=>{
     notifications.show({
         position: 'bottom-right',
         withCloseButton: true,

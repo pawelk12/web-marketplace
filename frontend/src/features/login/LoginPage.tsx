@@ -1,8 +1,8 @@
 import { Fieldset, TextInput, Button, Group } from '@mantine/core';
 import {useForm} from "@mantine/form";
 import {LoginFormValues} from "../../types/LoginFormValues.ts";
-import {LoginFailedNotification} from "../notifications/notifications.ts";
-import {useNavigate} from "react-router-dom";
+import {ErrorNotification} from "../notifications/notifications.ts";
+import {Link, useNavigate} from "react-router-dom";
 import {login} from "./api/login.ts";
 
 export const LoginPage  = () =>{
@@ -16,7 +16,7 @@ export const LoginPage  = () =>{
         },
 
         validate: {
-            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            email: (value) => (/^\S+@\S+\.\S{2,}$/.test(value) ? null : 'Invalid email'),
             password: (value) => (/^\S+$/.test(value) ? null : 'Password can not be empty'),
         },
     });
@@ -27,7 +27,7 @@ export const LoginPage  = () =>{
             navigate("/listings");
         }catch(e){
             const err = e as Error;
-            LoginFailedNotification(err.message);
+            ErrorNotification(err.message);
         }
     }
 
@@ -58,7 +58,7 @@ export const LoginPage  = () =>{
                         {...form.getInputProps('password')}
                     />
 
-                    <a href={"/register"} style={{
+                    <Link to={"/register"} style={{
                         display: 'block',
                         marginTop: '1rem',
                         marginBottom: '1rem',
@@ -67,7 +67,7 @@ export const LoginPage  = () =>{
                     }}>
 
                         Don't have an account? Click here to create one!
-                    </a>
+                    </Link>
                     <Group justify="flex-end" mt="md">
                         <Button type="submit" color="teal" radius="xl">Login</Button>
                     </Group>
