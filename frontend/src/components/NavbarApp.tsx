@@ -1,8 +1,8 @@
 import {IconBuildingStore, IconCirclePlus} from "@tabler/icons-react";
 import {Box, Button, NavLink} from "@mantine/core";
 import {useLocation, useNavigate} from "react-router-dom";
-import {API_URL} from "../config.ts";
 import {ErrorNotification} from "../features/notifications/notifications.ts";
+import {logout} from "../api/auth.ts";
 
 const data = [
     {icon: IconBuildingStore, label: 'Marketplace', link: '/listings'},
@@ -17,14 +17,7 @@ export const NavbarApp = () => {
 
     const handleLogOut = async () => {
         try {
-            const response = await fetch(`${API_URL}/auth/logout`, {
-                method: "POST",
-                credentials: "include",
-            })
-
-            if (!response.ok) {
-                throw new Error("Something went wrong");
-            }
+            await logout()
             navigate("/login");
         }catch(e){
             const err = e as Error;

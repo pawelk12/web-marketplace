@@ -3,7 +3,7 @@ import {useForm} from "@mantine/form";
 import {LoginFormValues} from "../../types/LoginFormValues.ts";
 import {ErrorNotification} from "../notifications/notifications.ts";
 import {Link, useNavigate} from "react-router-dom";
-import {login} from "./api/login.ts";
+import {login} from "../../api/auth.ts";
 
 export const LoginPage  = () =>{
     const navigate = useNavigate();

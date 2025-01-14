@@ -1,7 +1,7 @@
 import {Button, Checkbox, Fieldset, Group, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {RegisterFormValues} from "../../types/RegisterFormValues.ts";
-import {register} from "./api/register.ts";
+import {register} from "../../api/auth.ts";
 import {ErrorNotification} from "../notifications/notifications.ts";
 import {Link, useNavigate} from "react-router-dom";
 
