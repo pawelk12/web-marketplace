@@ -1,8 +1,10 @@
 import {Box, Button, Checkbox, FileInput, Group, NativeSelect, NumberInput, Textarea, TextInput} from "@mantine/core";
-import {useListingForm} from "./useListingForm.tsx";
+import {useListingForm} from "./useListingForm.ts";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {Loading} from "../../components/Loading.tsx";
+import {ErrorNotification, SuccessNotification} from "../notifications/notifications.ts";
+import {createListing} from "../../api/listing.ts";
 
 
 // Category for example MultiSelect
@@ -11,10 +13,8 @@ export const ListingForm = () => {
     const form  = useListingForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string|null>(null);
 
 const handleSubmit = form.onSubmit( async (values) => {
-    setError(null);
     setLoading(true);
     const formData = new FormData();
     formData.append("name", values.name);
@@ -24,22 +24,14 @@ const handleSubmit = form.onSubmit( async (values) => {
     formData.append("negotiable", values.negotiable.toString());
     formData.append("image", values.image!);
     try {
-        const response = await fetch("http://localhost:8000/api/listings",
-            {
-                method: "POST",
-                body: formData,
-            })
-
-        if (!response.ok) {
-            throw new Error(`status: ${response.status}`);
-        }
+        await createListing(formData);
         setLoading(false);
         navigate("/listings");
+        SuccessNotification("The listing has been posted.")
     } catch(error){
         setLoading(false);
-        if(error instanceof Error)
-            setError(error.message);
-        else setError("Something went wrong");
+        if(error instanceof Error) ErrorNotification(error.message);
+        else ErrorNotification("Something went wrong");
     }
 
 });
@@ -47,7 +39,6 @@ const handleSubmit = form.onSubmit( async (values) => {
     return (
         <>
             {loading && <div ><Loading/></div>}
-            {error && <div>{error}</div>}
 
             <Box style={(theme) => ({
                 backgroundColor: theme.colors.dark[6],

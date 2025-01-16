@@ -2,7 +2,7 @@ import {Button, Checkbox, Fieldset, Group, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {RegisterFormValues} from "../../types/RegisterFormValues.ts";
 import {register} from "../../api/auth.ts";
-import {ErrorNotification} from "../notifications/notifications.ts";
+import {ErrorNotification, SuccessNotification} from "../notifications/notifications.ts";
 import {Link, useNavigate} from "react-router-dom";
 
 
@@ -34,6 +34,7 @@ export const RegisterPage = () => {
     const handleSubmit = async (values: RegisterFormValues) => {
         try {
             await register(values.email, values.password);
+            SuccessNotification("Your registration has been completed.");
             navigate('/login')
         }catch(e){
             const err = e as Error;

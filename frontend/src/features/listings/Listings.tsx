@@ -1,5 +1,5 @@
 import {SearchPanel} from "../../components/SearchPanel.tsx";
-import {ListingDisplay} from "../../components/ListingDisplay.tsx";
+import {ListingsDisplay} from "../../components/ListingsDisplay.tsx";
 import {useEffect, useState} from "react";
 import {QueryParams} from "../../types/queryParams.ts";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -48,7 +48,7 @@ export const Listings = () => {
     return (
         <>
             <SearchPanel setParams={handleParamsChange}></SearchPanel>
-            <ListingDisplay queryParams={queryParams}></ListingDisplay>
+            <ListingsDisplay queryParams={queryParams}></ListingsDisplay>
         </>
 
     );

@@ -3,9 +3,11 @@ import {useEffect, useState} from "react";
 import {ListingForDisplayCard} from "../types/ListingForDisplayCard.ts";
 import {QueryParams} from "../types/queryParams.ts";
 import {Loading} from "./Loading.tsx";
+import {fetchListings} from "../api/listings.ts";
+import {ErrorNotification} from "../features/notifications/notifications.ts";
 
 
-export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null}) => {
+export const ListingsDisplay = ({ queryParams } : {queryParams: QueryParams| null}) => {
 
     const [listings, setListings] = useState<ListingForDisplayCard []>([]);
     const [loading, setLoading] = useState(true);
@@ -14,27 +16,23 @@ export const ListingDisplay = ({ queryParams } : {queryParams: QueryParams| null
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let queryParamsString: string = "";
-                if(queryParams!=null){
-                    const paramsString = new URLSearchParams(queryParams).toString();
-                    queryParamsString = paramsString;
-                }
-                const response = await fetch(`http://localhost:8000/api/listings?${queryParamsString}`);
-                if (!response.ok) {
-                    throw new Error(`status: ${response.status}`);
-                }
-                const data = await response.json();
+                const queryParamsString = queryParams ? new URLSearchParams(queryParams).toString() : "";
+                const data =  await fetchListings(queryParamsString);
                 setListings(data);
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
-                if(error instanceof Error)
+                if(error instanceof Error) {
                     setError(error.message);
-                else setError("Something went wrong");
+                    ErrorNotification(error.message);
+                } else {
+                    setError("Something went wrong, sorry.");
+                    ErrorNotification("Something went wrong.");
+                }
             }
         };
 
-        fetchData();
+        fetchData()
     }, [queryParams]);
 
     return (
