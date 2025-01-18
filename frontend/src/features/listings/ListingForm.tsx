@@ -42,7 +42,6 @@ const handleSubmit = form.onSubmit( async (values) => {
 
             <Box style={(theme) => ({
                 backgroundColor: theme.colors.dark[6],
-                // maxWidth: 20000,
                 margin: "auto",
                 borderRadius: 10,
                 padding: "20px",
@@ -59,6 +58,7 @@ const handleSubmit = form.onSubmit( async (values) => {
                         {...form.getInputProps('name')}
                     />
                     <Textarea
+                        autosize
                         withAsterisk = {false}
                         required
                         mb="lg"

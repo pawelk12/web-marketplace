@@ -6,6 +6,7 @@ import {ErrorPage} from "./error/ErrorPage.tsx";
 import {LoginPage} from "./login/LoginPage.tsx";
 import {useIsLogged} from "../hooks/useIsLogged.ts";
 import {RegisterPage} from "./register/RegisterPage.tsx";
+import {ListingView} from "./listings/ListingView.tsx";
 
 const publicRoutes: RouteObject[] = [
     {
@@ -43,7 +44,7 @@ const privateRoutes: RouteObject[] = [
             },
             {
                 path: "/listings/:id",
-                element: <ListingForm/>
+                element: <ListingView/>
             },
             {
                 path: "*",

@@ -16,12 +16,18 @@ export const useListingForm = () => {
         validate: {
             name: (value) => {
                 if (value.length < 5) {
-                    return "The item name must contain at least 5 letters."
+                    return "The item name must contain at least 5 characters."
+                }
+                if (value.length > 50) {
+                    return "The item name cannot exceed 50 characters."
                 }
             },
             description: (value) => {
-                if (value.length < 10) {
-                    return "The item name must contain at least 10 letters."
+                if (value.length < 100) {
+                    return "The item description must contain at least 100 characters."
+                }
+                if (value.length > 1000) {
+                    return "The item description cannot exceed 1000 characters."
                 }
             },
 

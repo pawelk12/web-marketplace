@@ -5,6 +5,7 @@ import {QueryParams} from "../types/queryParams.ts";
 import {Loading} from "./Loading.tsx";
 import {fetchListings} from "../api/listings.ts";
 import {ErrorNotification} from "../features/notifications/notifications.ts";
+import {useNavigate} from "react-router-dom";
 
 
 export const ListingsDisplay = ({ queryParams } : {queryParams: QueryParams| null}) => {
@@ -12,6 +13,7 @@ export const ListingsDisplay = ({ queryParams } : {queryParams: QueryParams| nul
     const [listings, setListings] = useState<ListingForDisplayCard []>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string|null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,8 +50,8 @@ export const ListingsDisplay = ({ queryParams } : {queryParams: QueryParams| nul
                         shadow="lg"
                         padding=""
                         component="a"
-                        // href="link to listing"
-                        target="_blank"
+                        onClick={() => navigate(`/listings/${listing.id}`)}
+                        style={{ cursor: "pointer" }}
                     >
 
                         <SimpleGrid cols={3}>
