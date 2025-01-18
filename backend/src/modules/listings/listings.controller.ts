@@ -27,6 +27,9 @@ import { EditListingDto } from './dto/edit-listing-dto';
 import { SortFilterListingDto } from './dto/sort-filter-listing-dto';
 import { TokenGuard } from '../auth/token.guard';
 import { UserID } from '../auth/user.decorator';
+import { plainToInstance } from 'class-transformer';
+import { ListingDto } from './dto/listing-dto';
+import { DisplayListingsDto } from './dto/display-listings-dto';
 
 @Controller('listings')
 export class ListingsController {
@@ -34,9 +37,9 @@ export class ListingsController {
 
   @Get()
   @UseGuards(TokenGuard)
-  // this function is async, but nest detects that and waits, so await and async is redundant
-  listListings(@Query() sortAndFilter: SortFilterListingDto) {
-    return this.listingsService.listListings(sortAndFilter);
+  async listListings(@Query() sortAndFilter: SortFilterListingDto) {
+    const listings = await this.listingsService.listListings(sortAndFilter);
+    return plainToInstance(DisplayListingsDto, listings);
   }
 
   // chce zeby uzytkownik ktory jest autorem jak wejdzie to mial wypelniony formularz i mogl sobie edytowac to ogloszenie
@@ -47,7 +50,7 @@ export class ListingsController {
     if (!listing) {
       throw new ListingNotFoundException();
     }
-    return listing;
+    return plainToInstance(ListingDto, listing);
   }
 
   @Post()
@@ -82,12 +85,13 @@ export class ListingsController {
     await fs.mkdir(uploadDir, { recursive: true });
 
     await fs.writeFile(filePath, file.buffer);
-    return this.listingsService.addListing(
+    const listing = await this.listingsService.addListing(
       data,
       filePath,
       uniqueFileName,
       userId,
     );
+    return plainToInstance(ListingDto, listing);
   }
 
   @Delete(':id')
@@ -141,12 +145,13 @@ export class ListingsController {
 
       await fs.writeFile(filePath, file.buffer);
 
-      return this.listingsService.editListing(
+      const listing = await this.listingsService.editListing(
         id,
         data,
         filePath,
         uniqueFileName,
       );
+      return plainToInstance(ListingDto, listing);
     }
 
     return this.listingsService.editListing(id, data);
