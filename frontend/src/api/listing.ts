@@ -28,3 +28,20 @@ export const getListing = async (id: string | undefined) => {
     }
     return await response.json();
 }
+
+export const editListing = async (formData: FormData, id: string | undefined) => {
+    const response = await fetch(`${API_URL}/listings/${id}`,
+        {
+            method: "PUT",
+            body: formData,
+            credentials: "include",
+        })
+
+    if (!response.ok) {
+        if (response.status === 422) {
+            throw new Error("The file size must not exceed 2 MB.");
+        }
+        const errData = await response.json();
+        throw new Error(errData.message);
+    }
+}

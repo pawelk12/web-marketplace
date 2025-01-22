@@ -1,38 +1,12 @@
 import {Badge, Card, Group, Image, Text} from '@mantine/core';
-import {Link, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import {API_URL} from "../../config.ts";
-import {ListingViewValues} from "../../types/ListingViewValues.ts";
 import {convertToDate} from "../../utils/convertToDate.ts";
 import {Loading} from "../../components/Loading.tsx";
-import {getListing} from "../../api/listing.ts";
-import {ErrorNotification} from "../notifications/notifications.ts";
+import {useFetchListing} from "./useFetchListing.ts";
 
 export const ListingView = () => {
-    const [listing, setListing] = useState<ListingViewValues>()
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string|null>(null);
-    const {id} = useParams();
-
-    useEffect(() => {
-        const fetchListing = async () => {
-            try {
-                const data = await getListing(id);
-                setListing(data);
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-                if(error instanceof Error) {
-                    setError(error.message);
-                    ErrorNotification(error.message);
-                } else {
-                    setError("Something went wrong, sorry.");
-                    ErrorNotification("Something went wrong.");
-                }
-            }
-        }
-        fetchListing();
-    }, [id]);
+    const {listing, error, loading} = useFetchListing()
 
     return (
         <>
@@ -49,7 +23,7 @@ export const ListingView = () => {
                         <Image
                             src={`http://localhost:8000/uploads/${listing.fileName}`}
                             height={500}
-                            alt="Norway"
+                            alt="picture"
                         />
                     </Card.Section>
 
