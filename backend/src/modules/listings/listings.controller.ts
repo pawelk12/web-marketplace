@@ -30,6 +30,7 @@ import { UserID } from '../auth/user.decorator';
 import { plainToInstance } from 'class-transformer';
 import { ListingDto } from './dto/listing-dto';
 import { DisplayListingsDto } from './dto/display-listings-dto';
+import { AuthorGuard } from './author.guard';
 
 @Controller('listings')
 export class ListingsController {
@@ -106,7 +107,7 @@ export class ListingsController {
   }
 
   @Put(':id')
-  @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard, AuthorGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: multer.memoryStorage(),

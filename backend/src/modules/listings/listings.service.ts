@@ -5,12 +5,13 @@ import { EditListingDto } from './dto/edit-listing-dto';
 import { promises as fs } from 'fs';
 import { ListingNotModifiedException } from '../../exceptions/listing-not-modified-exception';
 import { CheckCommonKeysEqual } from '../../utils/check-common-keys-equal';
+import { SortFilterListingDto } from './dto/sort-filter-listing-dto';
 
 @Injectable()
 export class ListingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listListings(sortAndFilter) {
+  async listListings(sortAndFilter: SortFilterListingDto) {
     if (!sortAndFilter.sortBy) {
       return this.prisma.listing.findMany();
     } else {
@@ -121,6 +122,17 @@ export class ListingsService {
         negotiable: data.negotiable,
         filePath: filePath,
         fileName: fileName,
+      },
+    });
+  }
+
+  async getListingAuthorId(id: number) {
+    return this.prisma.listing.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        userId: true,
       },
     });
   }
