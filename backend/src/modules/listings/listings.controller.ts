@@ -54,6 +54,10 @@ export class ListingsController {
     return plainToInstance(ListingDto, listing);
   }
 
+  @Get(':id/permission')
+  @UseGuards(TokenGuard, AuthorGuard)
+  async getPermission(@Param('id', ParseIntPipe) id: number) {}
+
   @Post()
   @UseGuards(TokenGuard)
   @UseInterceptors(

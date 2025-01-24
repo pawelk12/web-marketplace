@@ -8,6 +8,7 @@ import {useIsLogged} from "../hooks/useIsLogged.ts";
 import {RegisterPage} from "./register/RegisterPage.tsx";
 import {ListingView} from "./listings/ListingView.tsx";
 import {ListingEditForm} from "./listings/ListingEditForm.tsx";
+import {ProtectedEditRoute} from "./listings/ProtectedEditRoute.tsx";
 
 const publicRoutes: RouteObject[] = [
     {
@@ -49,7 +50,7 @@ const privateRoutes: RouteObject[] = [
             },
             {
                 path: "/listings/:id/edit",
-                element: <ListingEditForm/>
+                element: <ProtectedEditRoute children={<ListingEditForm/>}/>
             },
             {
                 path: "*",

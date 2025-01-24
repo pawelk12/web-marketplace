@@ -1,5 +1,5 @@
 export type ItemFormValues = {
-    id?: number;
+    // id?: number;
     name: string;
     description: string;
     condition: "new" | "used";

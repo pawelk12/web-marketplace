@@ -45,3 +45,12 @@ export const editListing = async (formData: FormData, id: string | undefined) =>
         throw new Error(errData.message);
     }
 }
+
+export const getListingPermission = async (id: string | undefined) => {
+
+    const response = await fetch(`${API_URL}/listings/${id}/permission`, {
+        method: 'GET',
+        credentials: 'include',
+    })
+    return response;
+}
