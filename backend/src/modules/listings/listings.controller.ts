@@ -100,7 +100,7 @@ export class ListingsController {
   }
 
   @Delete(':id')
-  @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard, AuthorGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteListing(@Param('id', ParseIntPipe) id: number) {
     const listing = await this.listingsService.getListingById(id);
