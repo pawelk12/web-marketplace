@@ -22,6 +22,7 @@ export const ListingsDisplay = ({ queryParams } : {queryParams: QueryParams| nul
                 const data =  await fetchListings(queryParamsString);
                 setListings(data);
                 setLoading(false);
+                setError(null);
             } catch (error) {
                 setLoading(false);
                 if(error instanceof Error) {

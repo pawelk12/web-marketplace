@@ -1,12 +1,41 @@
-import {Badge, Card, Group, Image, Text} from '@mantine/core';
-import {Link} from "react-router-dom";
+import {Badge, Button, Card, Group, Image, Modal, Text} from '@mantine/core';
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {API_URL} from "../../config.ts";
 import {convertToDate} from "../../utils/convertToDate.ts";
 import {Loading} from "../../components/Loading.tsx";
 import {useFetchListing} from "./useFetchListing.ts";
+import {useDisclosure} from "@mantine/hooks";
+import {deleteListing} from "../../api/listing.ts";
+import {ErrorNotification, SuccessNotification} from "../notifications/notifications.ts";
 
 export const ListingView = () => {
-    const {listing, error, loading} = useFetchListing()
+    const {listing, error, loading, isAllowed} = useFetchListing()
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [opened, { open, close }] = useDisclosure(false);
+    const {id} = useParams();
+
+
+    const handleEdit = () => {
+        navigate(`${location.pathname}/edit`);
+    }
+
+    const handleDelete = async () => {
+        try{
+            const response = await deleteListing(id);
+            if(response.status === 204){
+                navigate('/listings');
+                SuccessNotification("Listing has been deleted.");
+            }
+            else{
+                throw new Error("Something went wrong");
+            }
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(error){
+            ErrorNotification("Failed to delete listing");
+        }
+    }
 
     return (
         <>
@@ -54,6 +83,15 @@ export const ListingView = () => {
                     {/*temporarily*/}
                     <Link to={`${API_URL}/user/${listing.userId}`}>author</Link>
                 </Group>
+                {isAllowed &&
+                    <Group mt="lg">
+                        <Modal opened={opened} onClose={close} title="Are you sure you want to delete your listing?" centered>
+                            <Button onClick={handleDelete} fullWidth={true} color="red" variant="outline">Yes, I'm sure, please delete listing.</Button>
+                        </Modal>
+                        <Button onClick={handleEdit} fullWidth={true} variant="outline" color="blue">Edit</Button>
+                        <Button onClick={open} fullWidth={true} variant="outline" color="red">Delete</Button>
+                    </Group>
+                }
             </Card>}
         </>
     )

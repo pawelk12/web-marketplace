@@ -54,3 +54,11 @@ export const getListingPermission = async (id: string | undefined) => {
     })
     return response;
 }
+
+export const deleteListing = async (id: string | undefined) => {
+    const response = await fetch(`${API_URL}/listings/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    })
+    return response;
+}
