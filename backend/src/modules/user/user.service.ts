@@ -8,7 +8,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Creates a new user. The method checks if email (unique value) already exists in the db,
+   * Creates a new user. The method checks if email and username (unique values) already exists in the db,
    * if exists throw `ConfictException`.
    * Otherwise, it hashes password using Argon2id and creates a new record in the db.
    *
@@ -18,19 +18,28 @@ export class UserService {
    */
 
   async createUser(createUserDto: CreateUserDto) {
-    const existingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.user.findFirst({
       where: {
-        email: createUserDto.email,
+        OR: [
+          { email: createUserDto.email },
+          { username: createUserDto.username },
+        ],
       },
     });
     if (existingUser) {
-      throw new ConflictException('Email is already taken.');
+      if (createUserDto.email === existingUser.email) {
+        throw new ConflictException('This email is already taken.');
+      }
+      if (createUserDto.username === existingUser.username) {
+        throw new ConflictException('This username is already taken.');
+      }
     }
     const passwordHash = await a2.hash(createUserDto.password);
 
     return this.prisma.user.create({
       data: {
         email: createUserDto.email,
+        username: createUserDto.username,
         password: passwordHash,
       },
     });

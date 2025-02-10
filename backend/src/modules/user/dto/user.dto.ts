@@ -3,6 +3,7 @@ import { Exclude } from 'class-transformer';
 
 export class UserDto implements User {
   id: number;
+  username: string;
   email: string;
 
   @Exclude()
