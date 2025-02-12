@@ -12,6 +12,7 @@ export const RegisterPage = () => {
         mode: 'uncontrolled',
         initialValues: {
             email: '',
+            username: '',
             password: '',
             repeatedPassword: '',
             termsOfService: false,
@@ -19,12 +20,16 @@ export const RegisterPage = () => {
 
         validate: {
             email: (value) => (/^\S+@\S+\.\S{2,}$/.test(value) ? null : 'Invalid email'),
+            username: (value) => {
+              if(value.length > 30){
+                  return 'Username cannot be longer than 30 characters';
+              }
+            },
             password: (value) => {
                 if(value.length < 10) return 'Password must be at least 10 characters long';
                 return (/^\S+$/.test(value) ? null : 'Password cannot contain spaces')
             },
             repeatedPassword: (value, values) => {
-                // if (!(/^\S+$/.test(value))) return 'Password can not be empty';
                 return value === values.password ? null : 'Passwords do not match';
             },
             termsOfService: (value) => (value? null : 'You must accept the terms of service')
@@ -33,7 +38,7 @@ export const RegisterPage = () => {
 
     const handleSubmit = async (values: RegisterFormValues) => {
         try {
-            await register(values.email, values.password);
+            await register(values.email, values.username, values.password);
             SuccessNotification("Your registration has been completed.");
             navigate('/login')
         }catch(e){
@@ -58,6 +63,14 @@ export const RegisterPage = () => {
                     placeholder="example@example.com"
                     key={form.key('email')}
                     {...form.getInputProps('email')}
+                />
+
+                <TextInput
+                    label="Username"
+                    placeholder="enter your username here"
+                    mt="md"
+                    key={form.key('username')}
+                    {...form.getInputProps('username')}
                 />
 
                 <TextInput

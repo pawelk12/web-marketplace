@@ -80,8 +80,7 @@ export const ListingView = () => {
                 </div>
                 <Group  mt="xs">
                     <Text>author:</Text>
-                    {/*temporarily*/}
-                    <Link to={`${API_URL}/user/${listing.userId}`}>author</Link>
+                    <Link to={`${API_URL}/user/${listing.userId}`}>{listing.user.username}</Link>
                 </Group>
                 {isAllowed &&
                     <Group mt="lg">

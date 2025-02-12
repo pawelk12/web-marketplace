@@ -28,6 +28,13 @@ export class ListingsService {
       where: {
         id: id,
       },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
   }
 

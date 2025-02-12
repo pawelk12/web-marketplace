@@ -1,3 +1,7 @@
+type User = {
+    username: string,
+}
+
 export type ListingViewValues = {
     name: string;
     description: string;
@@ -7,5 +11,5 @@ export type ListingViewValues = {
     fileName: string;
     createdAt: string;
     userId: number;
-    authorName: string;
+    user: User;
 }
