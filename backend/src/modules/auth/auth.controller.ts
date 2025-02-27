@@ -3,13 +3,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { BasicGuard } from './basic.guard';
 import { UserID } from './user.decorator';
 import { TokenService } from '../token/token.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,12 +19,22 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(BasicGuard)
-  login(
+  async login(
     @UserID() userId: number,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const token = this.tokenService.createToken(userId);
-    response.cookie('access-token', token, {
+    const accessToken = this.tokenService.createAccessToken(userId);
+    const { value: refreshToken, expirationTime } =
+      await this.tokenService.createRefreshToken(userId);
+
+    response.cookie('refresh-token', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      expires: expirationTime,
+      //PRZYPISAC CIASTECZKO DO PATHA refresh-token czy cos takiego
+    });
+
+    response.cookie('access-token', accessToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
@@ -33,7 +44,16 @@ export class AuthController {
   }
 
   @Post('logout')
-  logout(@Res({ passthrough: true }) response: Response) {
+  async logout(
+    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
+  ) {
+    if (request.cookies['refresh-token']) {
+      await this.tokenService.revokeRefreshToken(
+        request.cookies['refresh-token'],
+      );
+    }
+    response.clearCookie('refresh-token');
     response.clearCookie('access-token');
     response.clearCookie('is-logged');
   }

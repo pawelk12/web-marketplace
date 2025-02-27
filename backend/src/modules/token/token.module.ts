@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { TokenService } from './token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Global()
 @Module({
@@ -13,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
-  providers: [TokenService],
+  providers: [TokenService, PrismaService],
   exports: [TokenService],
 })
 export class TokenModule {}
