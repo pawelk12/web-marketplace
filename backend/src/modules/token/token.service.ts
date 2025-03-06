@@ -21,29 +21,49 @@ export class TokenService {
 
   async createRefreshToken(
     userId: number,
-  ): Promise<{ value: string; expirationTime: Date }> {
+  ): Promise<{ value: string; expirationTime: Date; tokenId: string }> {
     const refreshToken = GenerateRefreshToken();
     const expirationTime = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const refreshTokenHash: string = GenerateHash(refreshToken);
-    await this.prisma.refreshToken.create({
+    const createdToken = await this.prisma.refreshToken.create({
       data: {
         userId: userId,
         tokenHash: refreshTokenHash,
         expiresAt: expirationTime,
       },
     });
-    return { value: refreshToken, expirationTime: expirationTime };
+    return {
+      value: refreshToken,
+      expirationTime: expirationTime,
+      tokenId: createdToken.id,
+    };
   }
 
   async revokeRefreshToken(refreshToken: string) {
     const refreshTokenHash: string = GenerateHash(refreshToken);
-    await this.prisma.refreshToken.update({
+    try {
+      await this.prisma.refreshToken.delete({
+        where: {
+          tokenHash: refreshTokenHash,
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {}
+  }
+
+  async issueRefreshToken(oldRefreshToken: string) {
+    const oldRefreshTokenHash: string = GenerateHash(oldRefreshToken);
+    const currDate = new Date();
+    const oldToken = await this.prisma.refreshToken.delete({
       where: {
-        tokenHash: refreshTokenHash,
-      },
-      data: {
-        revoked: true,
+        tokenHash: oldRefreshTokenHash,
+        expiresAt: { gte: currDate },
       },
     });
+
+    const { tokenId, value, expirationTime } = await this.createRefreshToken(
+      oldToken.userId,
+    );
+    return { tokenId, value, expirationTime, ownerId: oldToken.userId };
   }
 }

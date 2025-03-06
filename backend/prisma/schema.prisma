@@ -44,8 +44,6 @@ model RefreshToken {
   tokenHash         String    @unique
   createdAt         DateTime  @default(now())
   expiresAt         DateTime
-  revoked           Boolean   @default(false)
-  replacedByTokenId String?
 
   @@index([tokenHash])
 }

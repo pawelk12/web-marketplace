@@ -1,10 +1,12 @@
 import {
   Controller,
+  ForbiddenException,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { BasicGuard } from './basic.guard';
@@ -29,21 +31,22 @@ export class AuthController {
 
     response.cookie('refresh-token', refreshToken, {
       httpOnly: true,
-      sameSite: 'strict',
+      // sameSite: 'strict',
       expires: expirationTime,
-      //PRZYPISAC CIASTECZKO DO PATHA refresh-token czy cos takiego
+      path: '/api/auth',
     });
 
     response.cookie('access-token', accessToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 60 * 60 * 1000),
+      expires: new Date(Date.now() + 5 * 60 * 1000),
     });
     response.cookie('is-logged', true, {
-      expires: new Date(Date.now() + 60 * 60 * 1000),
+      expires: new Date(Date.now() + 5 * 60 * 1000),
     });
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   async logout(
     @Res({ passthrough: true }) response: Response,
     @Req() request: Request,
@@ -56,5 +59,43 @@ export class AuthController {
     response.clearCookie('refresh-token');
     response.clearCookie('access-token');
     response.clearCookie('is-logged');
+  }
+
+  @Post('refresh-token')
+  async refreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    if (request.cookies['access-token']) {
+      throw new ForbiddenException();
+    }
+    try {
+      const newRefreshToken = await this.tokenService.issueRefreshToken(
+        request.cookies['refresh-token'],
+      );
+
+      response.cookie('refresh-token', newRefreshToken.value, {
+        httpOnly: true,
+        // sameSite: 'strict',
+        expires: newRefreshToken.expirationTime,
+        path: '/api/auth',
+      });
+
+      const accessToken = this.tokenService.createAccessToken(
+        newRefreshToken.ownerId,
+      );
+
+      response.cookie('access-token', accessToken, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 5 * 60 * 1000),
+      });
+      response.cookie('is-logged', true, {
+        expires: new Date(Date.now() + 5 * 60 * 1000),
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
   }
 }
